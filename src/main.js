@@ -23,8 +23,10 @@ Vue.config.productionTip = false;
 new Vue({
   el: '#app',
   i18n,
+  mode: 'history',
   render: h => h(App),
   store,
   components: { App },
   template: '<App/>',
 });
+
