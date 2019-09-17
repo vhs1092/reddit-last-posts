@@ -9,10 +9,10 @@ import store from '@/store';
 import i18n from '@/languages/translations';
 import App from '@/App';
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { faEyeSlash, faEye } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faEyeSlash)
-
+library.add(faEye)
 Vue.use(VueAxios, axios);
 Vue.use(BootstrapVue);
 Vue.use(require('vue-moment'));

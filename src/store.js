@@ -20,12 +20,19 @@ const store = new Vuex.Store({
   },
 
   mutations: {
-    setPosts(state, data) {
-      state.postList = data
+    setPosts(state, coins) {
+      state.postList = coins
+    },
+    dismissSingle(state, index) {
+      state.postList.splice(index, 1);
     },
     getPosts(state, index) {
       state.activePost = null;
       state.activePost = state.postList[index];
+    },
+    dismissAll(state) {
+      state.postList = [];
+      state.activePost = null;
     },
   },
 });
