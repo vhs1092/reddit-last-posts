@@ -11,7 +11,11 @@ const messages = {
       comments_text: 'comments',
       dismiss_post: 'Dismiss Post',
       dismiss_all_posts: 'Dismiss All',
+      empty_posts: 'No Posts Available',
     },
+    post:{
+      author: 'by'
+    }
   }
 };
 

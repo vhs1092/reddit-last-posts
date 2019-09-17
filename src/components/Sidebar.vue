@@ -1,8 +1,8 @@
 <template>
-    <div>
+<div>
 
-    <div @click="closeModal" class="MobileCloseModal"  :class="{open: openMobile }">
-      X
+    <div @click="closeModal" class="MobileCloseModal" :class="{open: openMobile }">
+        X
     </div>
 
     <nav class="sidebar" id="sidebar" :class="{zIndex: openMobile }">
@@ -12,9 +12,9 @@
         <ul class="list-posts w-100 overflow-auto p-0">
             <transition-group name="post-list" tag="div" v-if="paginate.length > 0">
                 <li v-for="(item, index) in paginate" @click="selectPost(index,item)" :key="item.data.id" class="card px-5 py-5">
-                    <font-awesome-icon icon="eye" v-if="item.data.visited" class="visited-post"/>
-                    <font-awesome-icon icon="eye-slash" v-else class="visited-post"/>
-                    
+                    <font-awesome-icon icon="eye" v-if="item.data.visited" class="visited-post" />
+                    <font-awesome-icon icon="eye-slash" v-else class="visited-post" />
+
                     <div class="new-post btn-success" :class="{ checked: item.data.visited }"></div>
 
                     <div class="row align-items-center">
@@ -50,8 +50,7 @@
             </transition-group>
             <transition-group name="post-list" tag="div" v-else-if="emptyData">
                 <div class="post-empty" :key="1">
-                    <h5>{{ $t("sidebar.no_posts") }}</h5>
-                    <h6>{{ $t("sidebar.reload_page") }}</h6>
+                    <h5>{{ $t("sidebar.empty_posts") }}</h5>
                 </div>
             </transition-group>
 
@@ -66,10 +65,10 @@
                 </p>
             </div>
         </div>
-    <Loader v-if="paginate.length == 0" />
+        <Loader v-if="paginate.length == 0 && emptyData == 0" />
     </nav>
 
-    </div>
+</div>
 </template>
 
 <script>
@@ -111,7 +110,7 @@ export default {
         },
     },
     beforeMount() {
-      this.$store.dispatch('loadPosts')
+        this.$store.dispatch('loadPosts')
     },
     filters: {
         truncate: function (text, length, suffix) {
@@ -175,11 +174,12 @@ export default {
         overflow-x: hidden !important;
         margin: 0;
 
-        .visited-post{
-          position: absolute;
-          left:25px;
-          top: 10px;
+        .visited-post {
+            position: absolute;
+            left: 25px;
+            top: 10px;
         }
+
         .post-image {
             height: 150px;
             background-repeat: no-repeat;
@@ -285,11 +285,12 @@ export default {
 }
 
 .MobileCloseModal {
-  display:none;
-  position: fixed;
-  z-index: 55555;
-  left: 15px;
-  top: 15px;
+    display: none;
+    position: fixed;
+    z-index: 55555;
+    left: 30px;
+    top: 15px;
+    font-size: 30px
 }
 
 @media (max-width: 768px) {
