@@ -1,12 +1,30 @@
-import Vue from 'vue'
-import App from './App.vue'
-import router from './router'
-import store from './store'
+import Vue from 'vue';
+import BootstrapVue from 'bootstrap-vue';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap-vue/dist/bootstrap-vue.css';
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 
-Vue.config.productionTip = false
+import store from '@/store';
+import i18n from '@/languages/translations';
+import App from '@/App';
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+library.add(faEyeSlash)
+
+Vue.use(VueAxios, axios);
+Vue.use(BootstrapVue);
+Vue.use(require('vue-moment'));
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+Vue.config.productionTip = false;
 
 new Vue({
-  router,
+  el: '#app',
+  i18n,
+  render: h => h(App),
   store,
-  render: h => h(App)
-}).$mount('#app')
+  components: { App },
+  template: '<App/>',
+});

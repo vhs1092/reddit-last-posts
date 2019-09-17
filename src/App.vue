@@ -1,13 +1,19 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <Sidebar/>
+    <Post/>
   </div>
 </template>
+<script>
 
+import Sidebar from '@/components/Sidebar';
+import Post from '@/components/Post';
+
+export default {
+  name: 'App',
+  components: { Sidebar, Post },
+};
+</script>
 <style lang="scss">
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
