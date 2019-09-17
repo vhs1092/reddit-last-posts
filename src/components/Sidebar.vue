@@ -1,13 +1,17 @@
 <template>
     <div>
 
-    <nav class="sidebar" id="sidebar">
+    <div @click="closeModal" class="MobileCloseModal"  :class="{open: openMobile }">
+      X
+    </div>
+
+    <nav class="sidebar" id="sidebar" :class="{zIndex: openMobile }">
         <p class="sidebar-header btn-info py-2 m-0">
             {{ $t("sidebar.title") }}
         </p>
         <ul class="list-posts w-100 overflow-auto p-0">
-            <transition-group name="post-list" tag="div">
-                <li v-for="(item, index) in postList" @click="selectPost(index,item)" :key="item.data.id" class="card px-5 py-5">
+            <transition-group name="post-list" tag="div" v-if="paginate.length > 0">
+                <li v-for="(item, index) in paginate" @click="selectPost(index,item)" :key="item.data.id" class="card px-5 py-5">
                     <font-awesome-icon icon="eye" v-if="item.data.visited" class="visited-post"/>
                     <font-awesome-icon icon="eye-slash" v-else class="visited-post"/>
                     
@@ -25,7 +29,7 @@
                             <h6 class="text-black-50">
                                 <small>{{ item.data.created_utc | moment("from") }} </small>
                             </h6>
-                            <h5 class="text-info"><small>{{item.data.title}}</small></h5>
+                            <h5 class="text-info"><small>{{ item.data.title  | truncate(50, '...')  }}</small></h5>
                         </div>
                     </div>
 
@@ -44,59 +48,114 @@
 
                 </li>
             </transition-group>
+            <transition-group name="post-list" tag="div" v-else-if="emptyData">
+                <div class="post-empty" :key="1">
+                    <h5>{{ $t("sidebar.no_posts") }}</h5>
+                    <h6>{{ $t("sidebar.reload_page") }}</h6>
+                </div>
+            </transition-group>
+
         </ul>
         <div class="row">
             <button @click="dismissAll" class="btn btn-info dismiss-all col-12">
                 {{ $t("sidebar.dismiss_all_posts") }}
             </button>
+            <div class="paginate col-12 bg-dark">
+                <p v-for="pageNumber in countPages" :key="pageNumber">
+                    <a v-bind:key="pageNumber" href="#" @click="setPage(pageNumber)" class="text-white" :class="{current: currentPage === pageNumber}">{{ pageNumber }}</a>
+                </p>
+            </div>
         </div>
+    <Loader v-if="paginate.length == 0" />
     </nav>
 
     </div>
 </template>
 
 <script>
+import Loader from '@/components/Loader';
 
 export default {
     name: 'Sidebar',
+    components: {
+        Loader
+    },
     data() {
         return {
             displayLoader: true,
             currentPage: 1,
             postPerPage: 10,
-            totalPost: 50
+            totalPost: 50,
+            emptyData: 0,
+            openMobile: false
         };
     },
     computed: {
         postList() {
             return this.$store.state.postList;
-        }
+        },
+        countPages() {
+            return Math.ceil(this.totalPost / this.postPerPage);
+        },
+        paginate() {
+            this.newPage();
+            let position = (this.currentPage * this.postPerPage) - this.postPerPage;
+            if (!this.postList) {
+                return false;
+            }
+            if (position < 0) {
+                position = 0;
+            }
+            this.updateTotalPost();
+            return this.postList.slice(position, position + this.postPerPage);
+        },
     },
     beforeMount() {
       this.$store.dispatch('loadPosts')
     },
+    filters: {
+        truncate: function (text, length, suffix) {
+            return text.substring(0, length) + suffix;
+        },
+    },
     methods: {
         selectPost(index, item) {
             item.data.visited = true;
+            this.openMobile = true;
             const pageIndex = this.definePostIndex(index);
             this.activePost(pageIndex);
         },
         activePost(index) {
             this.$store.commit('getPosts', index);
         },
+
         dismiss(index) {
+            this.newPage();
             const pageIndex = this.definePostIndex(index);
             this.$store.commit('dismissSingle', pageIndex);
         },
         dismissAll() {
             this.$store.commit('dismissAll');
+            this.emptyData = 1;
         },
         definePostIndex(index) {
             return ((this.currentPage * this.postPerPage) - this.postPerPage) + index;
         },
         setPage(pageNumber) {
             this.currentPage = pageNumber;
-        }
+        },
+        updateTotalPost() {
+            this.totalPost = this.postList.length;
+        },
+        newPage() {
+            if (this.currentPage === 0) {
+                this.currentPage = 1;
+            }
+        },
+        closeModal() {
+            this.openMobile = false;
+        },
+
     }
 };
 </script>
@@ -107,7 +166,6 @@ export default {
     width: 30vw;
     transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
     display: inline-block;
-    float: left;
     margin: 0;
     overflow-x: hidden;
     height: 100vh;
@@ -192,6 +250,46 @@ export default {
             font-size: 14px;
         }
     }
+}
+
+.paginate {
+    display: inline-block;
+    width: 50%;
+    padding: 0 0 0 14px;
+    text-align: left;
+    box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, 0.25);
+
+    .current {
+        color: #fff;
+        background: black;
+    }
+
+    p {
+        display: inline;
+        margin: 0 0 0 -1px;
+    }
+
+    a {
+        display: inline-block;
+        padding: 10px 12px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+
+        &:hover {
+            text-decoration: none;
+            background: rgba(0, 0, 0, 0.1);
+            color: #fff;
+        }
+    }
+}
+
+.MobileCloseModal {
+  display:none;
+  position: fixed;
+  z-index: 55555;
+  left: 15px;
+  top: 15px;
 }
 
 @media (max-width: 768px) {
